@@ -1,4 +1,4 @@
-NOTEBOOK_CONFIG=~/.jupyter/jupyter_notebook_config2.py
+NOTEBOOK_CONFIG=~/.jupyter/jupyter_notebook_config.py
 
 # backup existing config, is any
 cp $NOTEBOOK_CONFIG ~/jupyter_notebook_config_backup.py
