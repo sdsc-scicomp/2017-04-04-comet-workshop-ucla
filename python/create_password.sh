@@ -1,0 +1,7 @@
+NOTEBOOK_CONFIG=~/.jupyter/jupyter_notebook_config2.py
+
+# backup existing config, is any
+cp $NOTEBOOK_CONFIG ~/jupyter_notebook_config_backup.py
+
+mkdir ~/.jupyter
+echo "c = get_config();c.NotebookApp.password = u'"$(python -c 'from IPython.lib import passwd;print(passwd())')"'" > $NOTEBOOK_CONFIG
