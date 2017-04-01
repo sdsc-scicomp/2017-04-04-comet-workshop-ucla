@@ -6,7 +6,7 @@
 #SBATCH --ntasks-per-node=24
 #SBATCH --export=ALL
 ##SBATCH --reservation=SI2016D3Morning
-#SBATCH -t 02:00:00
+#SBATCH -t 04:00:00
 
 module load anaconda
 jupyter notebook --no-browser --ip=*
