@@ -6,6 +6,9 @@ matplotlib.use("agg")
 
 import matplotlib.pyplot
 
+# See details about this software on the Python tutorial of Software Carpentry at:
+# https://swcarpentry.github.io/python-novice-inflammation/
+
 def analyze(filename):
     """Create plot from inflammation data
     
@@ -37,14 +40,3 @@ def analyze(filename):
     fig.tight_layout()
     matplotlib.pyplot.savefig(filename.replace("csv", "png"))
     matplotlib.pyplot.close(fig)
-    
-def detect_problems(filename):
-
-    data = numpy.loadtxt(fname=filename, delimiter=',')
-
-    if numpy.max(data, axis=0)[0] == 0 and numpy.max(data, axis=0)[20] == 20:
-        print('Suspicious looking maxima!')
-    elif numpy.sum(numpy.min(data, axis=0)) == 0:
-        print('Minima add up to zero!')
-    else:
-        print('Seems OK!')
