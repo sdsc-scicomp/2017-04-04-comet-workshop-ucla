@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --job-name="hellompirunrsh"
+#SBATCH --output="hellompirunrsh.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=24
+#SBATCH --export=ALL
+#SBATCH -t 01:30:00
+
+#Generate a hostfile from the slurm node list
+export SLURM_NODEFILE=`generate_pbs_nodefile`
+
+#Run the job using mpirun_rsh
+mpirun_rsh -hostfile $SLURM_NODEFILE -np 48 ../hello_mpi

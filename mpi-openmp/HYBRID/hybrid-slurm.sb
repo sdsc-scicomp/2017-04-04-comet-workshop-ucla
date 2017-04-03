@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --job-name="hellohybrid"
+#SBATCH --output="hellohybrid.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=24
+#SBATCH --export=ALL
+#SBATCH -t 01:30:00
+
+#This job runs with 2 nodes, 24 cores per node for a total of 48 cores.
+# We use 8 MPI tasks and 6 OpenMP threads per MPI task
+
+export OMP_NUM_THREADS=6
+ibrun --npernode 4 ./hello_hybrid

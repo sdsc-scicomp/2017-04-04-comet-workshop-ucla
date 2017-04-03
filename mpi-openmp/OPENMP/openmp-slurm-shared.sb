@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name="hell_openmp_shared"
+#SBATCH --output="hello_openmp_shared.%j.%N.out"
+#SBATCH --partition=shared
+#SBATCH --share
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=16
+#SBATCH --mem=80G
+#SBATCH --export=ALL
+#SBATCH -t 01:30:00
+
+#SET the number of openmp threads
+export OMP_NUM_THREADS=16
+
+#Run the openmp job
+./hello_openmp

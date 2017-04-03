@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name="hadoopanagram"
+#SBATCH --output="hadoopanagram.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=24
+#SBATCH -t 00:15:00
+
+#Clean up old output
+rm -f part-00000
+
+#Setup config
+export HADOOP_CONF_DIR=/home/$USER/cometcluster
+export WORKDIR=`pwd`
+module load hadoop
+myhadoop-configure.sh
+export PATH=/opt/hadoop/2.6.0/sbin:$PATH
+
+#Start Hadoop and run code
+start-all.sh
+hdfs dfs -mkdir -p /user/$USER/input
+hdfs dfs -put $WORKDIR/SINGLE.TXT /user/$USER/input/SINGLE.TXT
+hadoop jar $WORKDIR/AnagramJob.jar /user/$USER/input/SINGLE.TXT /user/$USER/output
+hdfs dfs -get /user/$USER/output/part* $WORKDIR/
+
+#Stop Hadoop
+stop-all.sh
+myhadoop-cleanup.sh

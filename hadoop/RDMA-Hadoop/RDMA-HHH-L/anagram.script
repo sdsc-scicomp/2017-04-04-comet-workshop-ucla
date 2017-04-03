@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name="rdmahadoopanagram"
+#SBATCH --output="rdmahadoopanagram.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=3
+#SBATCH --ntasks-per-node=24
+#SBATCH -t 00:15:00
+
+#Script request 3 nodes - one used for namenode, 2 for data nodes/processing
+
+#Set modulepath and load RDMA Hadoop Module
+export MODULEPATH=/share/apps/compute/modulefiles/applications:$MODULEPATH
+module load rdma-hadoop/2x-1.1.0
+
+#Get the host list
+export SLURM_NODEFILE=`generate_pbs_nodefile`
+cat $SLURM_NODEFILE | sort -u > hosts.hadoop.list
+
+#Setup Lustre location for HDFS storage and set stripe.
+export HDATADIR="/oasis/scratch/comet/$USER/temp_project/HDATA"
+if [ ! -d "$HDATADIR" ]; then
+	mkdir -p $HDATADIR
+fi
+lfs setstripe --stripe-size 64m $HDATADIR
+
+
+#Use SLURM integrated configuration/startup script
+hibd_install_configure_start.sh -s -n ./hosts.hadoop.list -i $SLURM_JOBID -h $HADOOP_HOME -j $JAVA_HOME -m hhh-l -l $HDATADIR -r /dev/shm -d /scratch/$USER/$SLURM_JOBID -t /scratch/$USER/$SLURM_JOBID/hadoop_local
+
+#Commands to run ANAGRAM example
+$HADOOP_HOME/bin/hdfs --config $HOME/conf_$SLURM_JOBID dfs -mkdir -p /user/$USER/input
+$HADOOP_HOME/bin/hdfs --config $HOME/conf_$SLURM_JOBID dfs -put SINGLE.TXT /user/$USER/input/SINGLE.TXT
+$HADOOP_HOME/bin/hadoop --config $HOME/conf_$SLURM_JOBID jar AnagramJob.jar /user/$USER/input/SINGLE.TXT /user/$USER/output
+$HADOOP_HOME/bin/hdfs --config $HOME/conf_$SLURM_JOBID dfs -get /user/$USER/output/part* $SLURM_WORKING_DIR
+
+#Clean up
+hibd_stop_cleanup.sh -d -h $HADOOP_HOME -m hhh-l -l $HDATADIR -r /dev/shm
