@@ -8,5 +8,6 @@
 #SBATCH --reservation=UCLARes
 #SBATCH -t 04:00:00
 
+export MODULEPATH=/share/apps/compute/modulefiles/applications:$MODULEPATH
 module load anaconda
 jupyter notebook --no-browser --ip=*
